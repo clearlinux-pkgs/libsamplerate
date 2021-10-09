@@ -4,13 +4,14 @@
 #
 Name     : libsamplerate
 Version  : 0.1.9
-Release  : 18
+Release  : 19
 URL      : http://www.mega-nerd.com/SRC/libsamplerate-0.1.9.tar.gz
 Source0  : http://www.mega-nerd.com/SRC/libsamplerate-0.1.9.tar.gz
 Summary  : An audio Sample Rate Conversion library
 Group    : Development/Tools
 License  : BSD-2-Clause
 Requires: libsamplerate-bin = %{version}-%{release}
+Requires: libsamplerate-filemap = %{version}-%{release}
 Requires: libsamplerate-lib = %{version}-%{release}
 Requires: libsamplerate-license = %{version}-%{release}
 BuildRequires : alsa-lib-dev
@@ -36,6 +37,7 @@ perfroming sample rate conversion of audio data.
 Summary: bin components for the libsamplerate package.
 Group: Binaries
 Requires: libsamplerate-license = %{version}-%{release}
+Requires: libsamplerate-filemap = %{version}-%{release}
 
 %description bin
 bin components for the libsamplerate package.
@@ -72,10 +74,19 @@ Group: Documentation
 doc components for the libsamplerate package.
 
 
+%package filemap
+Summary: filemap components for the libsamplerate package.
+Group: Default
+
+%description filemap
+filemap components for the libsamplerate package.
+
+
 %package lib
 Summary: lib components for the libsamplerate package.
 Group: Libraries
 Requires: libsamplerate-license = %{version}-%{release}
+Requires: libsamplerate-filemap = %{version}-%{release}
 
 %description lib
 lib components for the libsamplerate package.
@@ -116,7 +127,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1626801284
+export SOURCE_DATE_EPOCH=1633757677
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -129,7 +140,7 @@ export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -fl
 make  %{?_smp_mflags}
 
 pushd ../build32/
-export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig:/usr/share/pkgconfig"
 export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
 export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
 export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
@@ -139,21 +150,21 @@ make  %{?_smp_mflags}
 popd
 unset PKG_CONFIG_PATH
 pushd ../buildavx2/
-export CFLAGS="$CFLAGS -m64 -march=haswell"
-export CXXFLAGS="$CXXFLAGS -m64 -march=haswell"
-export FFLAGS="$FFLAGS -m64 -march=haswell"
-export FCFLAGS="$FCFLAGS -m64 -march=haswell"
-export LDFLAGS="$LDFLAGS -m64 -march=haswell"
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3"
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3"
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3"
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3"
 %configure --disable-static
 make  %{?_smp_mflags}
 popd
 unset PKG_CONFIG_PATH
 pushd ../buildavx512/
-export CFLAGS="$CFLAGS -m64 -march=skylake-avx512 -mprefer-vector-width=256"
-export CXXFLAGS="$CXXFLAGS -m64 -march=skylake-avx512 -mprefer-vector-width=256"
-export FFLAGS="$FFLAGS -m64 -march=skylake-avx512 -mprefer-vector-width=256"
-export FCFLAGS="$FCFLAGS -m64 -march=skylake-avx512 -mprefer-vector-width=256"
-export LDFLAGS="$LDFLAGS -m64 -march=skylake-avx512"
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v4 -mprefer-vector-width=256"
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v4 -mprefer-vector-width=256"
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v4 -mprefer-vector-width=256"
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v4 -mprefer-vector-width=256"
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v4"
 %configure --disable-static
 make  %{?_smp_mflags}
 popd
@@ -171,7 +182,7 @@ cd ../buildavx512;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1626801284
+export SOURCE_DATE_EPOCH=1633757677
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libsamplerate
 cp %{_builddir}/libsamplerate-0.1.9/COPYING %{buildroot}/usr/share/package-licenses/libsamplerate/b14ca785361a1ed431045adc8da1931eec2e3caf
@@ -184,12 +195,20 @@ pushd %{buildroot}/usr/lib32/pkgconfig
 for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
+if [ -d %{buildroot}/usr/share/pkgconfig ]
+then
+pushd %{buildroot}/usr/share/pkgconfig
+for i in *.pc ; do ln -s $i 32$i ; done
 popd
-pushd ../buildavx512/
-%make_install_avx512
+fi
 popd
 pushd ../buildavx2/
-%make_install_avx2
+%make_install_v3
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
+popd
+pushd ../buildavx512/
+%make_install_v4
+/usr/bin/elf-move.py avx512 %{buildroot}-v4 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 popd
 %make_install
 
@@ -198,15 +217,12 @@ popd
 
 %files bin
 %defattr(-,root,root,-)
-/usr/bin/haswell/avx512_1/sndfile-resample
-/usr/bin/haswell/sndfile-resample
 /usr/bin/sndfile-resample
+/usr/share/clear/optimized-elf/bin*
 
 %files dev
 %defattr(-,root,root,-)
 /usr/include/samplerate.h
-/usr/lib64/haswell/avx512_1/libsamplerate.so
-/usr/lib64/haswell/libsamplerate.so
 /usr/lib64/libsamplerate.so
 /usr/lib64/pkgconfig/samplerate.pc
 
@@ -234,14 +250,15 @@ popd
 /usr/share/doc/libsamplerate0-dev/html/quality.html
 /usr/share/doc/libsamplerate0-dev/html/win32.html
 
+%files filemap
+%defattr(-,root,root,-)
+/usr/share/clear/filemap/filemap-libsamplerate
+
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/haswell/avx512_1/libsamplerate.so.0
-/usr/lib64/haswell/avx512_1/libsamplerate.so.0.1.8
-/usr/lib64/haswell/libsamplerate.so.0
-/usr/lib64/haswell/libsamplerate.so.0.1.8
 /usr/lib64/libsamplerate.so.0
 /usr/lib64/libsamplerate.so.0.1.8
+/usr/share/clear/optimized-elf/lib*
 
 %files lib32
 %defattr(-,root,root,-)
