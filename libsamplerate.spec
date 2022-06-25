@@ -4,7 +4,7 @@
 #
 Name     : libsamplerate
 Version  : 0.1.9
-Release  : 23
+Release  : 24
 URL      : http://www.mega-nerd.com/SRC/libsamplerate-0.1.9.tar.gz
 Source0  : http://www.mega-nerd.com/SRC/libsamplerate-0.1.9.tar.gz
 Summary  : An audio Sample Rate Conversion library
@@ -127,7 +127,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1656048413
+export SOURCE_DATE_EPOCH=1656132221
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -182,7 +182,7 @@ cd ../buildavx512;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1656048413
+export SOURCE_DATE_EPOCH=1656132221
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libsamplerate
 cp %{_builddir}/libsamplerate-0.1.9/COPYING %{buildroot}/usr/share/package-licenses/libsamplerate/b14ca785361a1ed431045adc8da1931eec2e3caf
