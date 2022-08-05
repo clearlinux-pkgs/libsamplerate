@@ -1,5 +1,5 @@
 PKG_NAME := libsamplerate
-URL = http://www.mega-nerd.com/SRC/libsamplerate-0.1.9.tar.gz
+URL = https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz
 ARCHIVES = 
 
 include ../common/Makefile.common
