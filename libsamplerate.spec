@@ -6,7 +6,7 @@
 #
 Name     : libsamplerate
 Version  : 0.2.2
-Release  : 27
+Release  : 28
 URL      : https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz
 Source0  : https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz
 Source1  : https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz.sig
