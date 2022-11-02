@@ -6,7 +6,7 @@
 #
 Name     : libsamplerate
 Version  : 0.2.2
-Release  : 31
+Release  : 32
 URL      : https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz
 Source0  : https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz
 Source1  : https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz.sig
@@ -108,7 +108,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1667412353
+export SOURCE_DATE_EPOCH=1667430374
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -163,7 +163,7 @@ cd ../buildavx512;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1667412353
+export SOURCE_DATE_EPOCH=1667430374
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libsamplerate
 cp %{_builddir}/libsamplerate-%{version}/COPYING %{buildroot}/usr/share/package-licenses/libsamplerate/b14ca785361a1ed431045adc8da1931eec2e3caf || :
